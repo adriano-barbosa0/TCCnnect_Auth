@@ -1,0 +1,18 @@
+version: '4.40'
+ 
+services:
+  postgres:
+    image: postgres:14.7
+    container_name: postgres-container-TCCnnect
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dataUser
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: "no"
+ 
+volumes:
+  postgres_data:
