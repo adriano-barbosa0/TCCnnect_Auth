@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -30,8 +31,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         String tokenJWT = getToken(request);
         if(tokenJWT != null) {
             String subject = tokenService.getSubject(tokenJWT);
-            UserDetails usuario = usuarioRepository.findByLogin(subject);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+            Optional<UserDetails> usuario = usuarioRepository.findByLogin(subject);
+            UsernamePasswordAuthenticationToken authentication = usuario.map(user -> new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())).orElse(null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);

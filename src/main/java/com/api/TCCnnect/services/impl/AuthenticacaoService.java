@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class AuthenticacaoService implements UserDetailsService {
 
@@ -18,14 +19,7 @@ public class AuthenticacaoService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        UserDetails usuario = usuarioRepository.findByLogin(username);
-
-        if (usuario == null ){
-            throw new UsernameNotFoundException("Dados inválidos");
-        }
-
-        return usuario;
+        return usuarioRepository.findByLogin(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Dados inválidos"));
     }
-
 }

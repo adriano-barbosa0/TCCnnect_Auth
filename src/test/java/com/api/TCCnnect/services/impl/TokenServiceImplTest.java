@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TokenServiceImplTest {
@@ -17,12 +19,12 @@ class TokenServiceImplTest {
     void setUp() {
         tokenService = new TokenServiceImpl();
         ReflectionTestUtils.setField(tokenService, "secret", "12345678");
-        usuario = new Usuario("1", "userLogin@email.com", "userPassword");
+        usuario = new Usuario((UUID.fromString("63e954c3-191c-4231-8382-bf5e900e3828")), "userLogin@email.com", "userPassword", null, null, null, null, null, null);
     }
 
     @Test
     void deveGerarTokenValido() {
-        Usuario usuario = new Usuario("1", "userLogin@email.com", "userPassword");
+        Usuario usuario = new Usuario(UUID.fromString("de588f6e-8999-4526-89f1-9b2d5453bbfe"), "userLogin@email.com", "userPassword", null, null, null, null, null, null);
         String token = tokenService.gerarToken(usuario);
         assertNotNull(token);
     }

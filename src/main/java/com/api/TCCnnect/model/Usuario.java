@@ -2,16 +2,18 @@ package com.api.TCCnnect.model;
 
 import com.api.TCCnnect.dto.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 
 @Entity
@@ -19,11 +21,12 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "usuarios")
 @Getter
+@Setter
 @EqualsAndHashCode(of = "id")
 public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @Column(nullable = false, unique = true)
     private String login;
@@ -31,11 +34,24 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-//    private UserRole role;
+    private String name;
+
+    private String bio;
+
+    private String avatar_url;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
     @Override
     public String getPassword() {

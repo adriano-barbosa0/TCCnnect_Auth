@@ -25,7 +25,7 @@ public class TokenServiceImpl implements TokenService {
             return JWT.create()
                     .withIssuer("Api AuthUser")
                     .withSubject(usuario.getLogin())
-                    .withClaim("Id", usuario.getId())
+                    .withClaim("Id", usuario.getId().toString())
                     .withExpiresAt(expirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {

@@ -13,6 +13,11 @@ import java.util.List;
 @RestControllerAdvice
 public class TratadorDeErros {
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> tratarErroUserAlreadyExists(RuntimeException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
         @ExceptionHandler(UsernameNotFoundException.class)
         public ResponseEntity<String> tratarErroUsernameNotFound(UsernameNotFoundException ex) {
             return ResponseEntity.status(401).body(ex.getMessage());
