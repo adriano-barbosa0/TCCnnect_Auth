@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -52,5 +53,20 @@ public class TokenServiceImpl implements TokenService {
         return LocalDateTime.now()
                 .plusHours(3)
                 .toInstant(ZoneOffset.of("-03:00"));
+    }
+
+    public UUID extractUserId(String tokenJWT) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            String userId = JWT.require(algorithm)
+                    .withIssuer("Api AuthUser")
+                    .build()
+                    .verify(tokenJWT)
+                    .getClaim("Id")
+                    .asString();
+            return UUID.fromString(userId);
+        } catch (JWTVerificationException exception) {
+            throw new RuntimeException("Token inválido ou expirado!", exception);
+        }
     }
 }

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.ConnectionBuilder;
 import java.util.UUID;
 
 @Entity
@@ -28,8 +27,4 @@ public class Seguidores {
     @JoinColumn(name = "id_usuario_seguido")
     private Usuario idUsuarioSeguido;  // quem está seguindo
 
-
-    public static ConnectionBuilder builder() {
-        return null;
-    }
 }

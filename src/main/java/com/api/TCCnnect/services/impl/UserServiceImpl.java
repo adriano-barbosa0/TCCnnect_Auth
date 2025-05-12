@@ -8,6 +8,8 @@ import com.api.TCCnnect.services.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -31,6 +33,12 @@ public class UserServiceImpl implements UserService {
         usuario.setRole(UserRole.User);
 
         return usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public Usuario findById(UUID id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
 }

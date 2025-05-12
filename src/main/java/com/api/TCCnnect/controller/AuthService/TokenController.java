@@ -1,4 +1,4 @@
-package com.api.TCCnnect.controller;
+package com.api.TCCnnect.controller.AuthService;
 
 import com.api.TCCnnect.dto.DadosAutenticacao;
 import com.api.TCCnnect.dto.DadosTokeJWT;
@@ -12,18 +12,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/login")
-public class AuthenticacaoController {
+@RequestMapping("/auth")
+public class TokenController {
 
     private final AuthenticationManager manager;
     private  final TokenService tokenService;
 
-    public AuthenticacaoController (AuthenticationManager manager, TokenService tokenService) {
+    public TokenController(AuthenticationManager manager, TokenService tokenService) {
         this.manager = manager;
         this.tokenService = tokenService;
     }
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<?> efetuarLogin(@RequestBody @Valid DadosAutenticacao dados) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(dados.login(), dados.password());
         Authentication authentication = manager.authenticate(authenticationToken);
@@ -31,10 +31,4 @@ public class AuthenticacaoController {
         return ResponseEntity.ok(new DadosTokeJWT(tokenJWT));
 
     }
-
-    @GetMapping
-    public String olaMundo() {
-        return "Hello World Spring com token!";
-    }
-
 }
