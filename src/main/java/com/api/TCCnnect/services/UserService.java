@@ -8,5 +8,9 @@ public interface UserService {
     Usuario saveUser(Usuario usuario);
 
     Usuario findById(UUID id);
+
+    void updateUser(Usuario usuario);
+
+    void deleteUser(Usuario usuario);
 }
 

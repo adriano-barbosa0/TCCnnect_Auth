@@ -36,6 +36,7 @@ public class AuthController {
         UserProfileDto userProfile = new UserProfileDto(
                 usuario.getId(),
                 usuario.getUsername(),
+                usuario.getName(),
                 usuario.getBio(),
                 usuario.getAvatar_url()
         );

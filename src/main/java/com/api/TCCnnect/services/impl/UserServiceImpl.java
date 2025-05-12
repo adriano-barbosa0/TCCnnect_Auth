@@ -41,4 +41,25 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    @Override
+    public void updateUser(Usuario usuario) {
+
+        Usuario existingUser = usuarioRepository.findById(usuario.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existingUser.setName(usuario.getName());
+        existingUser.setBio(usuario.getBio());
+        existingUser.setAvatar_url(usuario.getAvatar_url());
+
+        usuarioRepository.save(existingUser);
+    }
+
+    @Override
+    public void deleteUser(Usuario usuario) {
+        Usuario existingUser = usuarioRepository.findById(usuario.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        usuarioRepository.delete(existingUser);
+    }
+
 }
