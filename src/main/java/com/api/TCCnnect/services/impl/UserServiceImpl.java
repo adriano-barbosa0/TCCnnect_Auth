@@ -8,6 +8,7 @@ import com.api.TCCnnect.services.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -60,6 +61,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         usuarioRepository.delete(existingUser);
+    }
+
+    @Override
+    public List<Usuario> findByNameStartingWith(String namePrefix) {
+        return usuarioRepository.findByLoginStartingWithIgnoreCase(namePrefix);
+
     }
 
 }

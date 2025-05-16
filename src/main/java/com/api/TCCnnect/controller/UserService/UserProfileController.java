@@ -7,7 +7,9 @@ import com.api.TCCnnect.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -28,7 +30,7 @@ public class UserProfileController {
 
         UserProfileDto userProfileDto = new UserProfileDto(
                 userProfile.getId(),
-                userProfile.getUsername(),
+                userProfile.getLogin(),
                 userProfile.getName(),
                 userProfile.getBio(),
                 userProfile.getAvatar_url()
@@ -52,7 +54,7 @@ public class UserProfileController {
 
         UserProfileDto userProfileDto = new UserProfileDto(
                 usuario.getId(),
-                usuario.getUsername(),
+                usuario.getLogin(),
                 usuario.getName(),
                 usuario.getBio(),
                 usuario.getAvatar_url()
@@ -70,6 +72,21 @@ public class UserProfileController {
         userService.deleteUser(usuario);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserProfileDto>> searchUserProfile(@RequestParam String login) {
+        List<Usuario> users = userService.findByNameStartingWith(login);
+        List<UserProfileDto> userProfiles = users.stream()
+                .map(user -> new UserProfileDto(
+                        user.getId(),
+                        user.getLogin(),
+                        user.getName(),
+                        user.getBio(),
+                        user.getAvatar_url()
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userProfiles);
     }
 
 
