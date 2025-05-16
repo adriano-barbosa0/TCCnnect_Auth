@@ -80,4 +80,18 @@ public class Usuario implements UserDetails {
     }
 
 
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", bio='" + bio + '\'' +
+                ", avatar_url='" + avatar_url + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", role=" + role +
+                '}';
+    }
 }
