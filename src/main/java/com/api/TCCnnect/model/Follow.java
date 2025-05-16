@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -12,7 +13,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "seguidores", uniqueConstraints = @UniqueConstraint(columnNames = {"id_usuario", "id_usuario_seguido"}))
 @Getter
-public class Seguidores {
+@Setter
+public class Follow {
 
 
     @Id
@@ -21,10 +23,10 @@ public class Seguidores {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")
-    private Usuario usuarioSeguido;  // quem está sendo seguido
+    private Usuario followed;  // quem está sendo seguido
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario_seguido")
-    private Usuario idUsuarioSeguido;  // quem está seguindo
+    private Usuario follower;  // quem está seguindo
 
 }

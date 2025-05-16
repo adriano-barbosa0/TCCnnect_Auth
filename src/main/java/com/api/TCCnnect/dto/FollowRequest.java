@@ -1,4 +1,6 @@
 package com.api.TCCnnect.dto;
 
-public class FollowRequest {
+import java.util.UUID;
+
+public record FollowRequest( UUID followerId, UUID followedId) {
 }
