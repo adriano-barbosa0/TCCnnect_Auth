@@ -1,6 +1,6 @@
-package com.api.TCCnnect.controller.UserService;
+package com.api.TCCnnect.controller.User;
 
-import com.api.TCCnnect.dto.UserProfileDto;
+import com.api.TCCnnect.dto.UserProfileDTO;
 import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.services.TokenService;
 import com.api.TCCnnect.services.UserService;
@@ -24,11 +24,11 @@ public class UserProfileController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable UUID id) {
+    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable UUID id) {
 
         User userProfile = userService.findById(id);
 
-        UserProfileDto userProfileDto = new UserProfileDto(
+        UserProfileDTO userProfileDto = new UserProfileDTO(
                 userProfile.getId(),
                 userProfile.getLogin(),
                 userProfile.getName(),
@@ -40,19 +40,19 @@ public class UserProfileController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<UserProfileDto> updateUserProfile(@RequestHeader("Authorization") String token,
-                                                              @RequestBody UserProfileDto userProfileDtoReq) {
+    public ResponseEntity<UserProfileDTO> updateUserProfile(@RequestHeader("Authorization") String token,
+                                                            @RequestBody UserProfileDTO userProfileDTOReq) {
         String jwt = token.replace("Bearer ", "");
         UUID userId = tokenService.extractUserId(jwt);
         User user = userService.findById(userId);
 
-        user.setName(userProfileDtoReq.name() != null ? userProfileDtoReq.name() : user.getName());
-        user.setBio(userProfileDtoReq.bio() != null ? userProfileDtoReq.bio() : user.getBio());
-        user.setAvatar_url(userProfileDtoReq.avatarUrl() != null ? userProfileDtoReq.avatarUrl() : user.getAvatar_url());
+        user.setName(userProfileDTOReq.name() != null ? userProfileDTOReq.name() : user.getName());
+        user.setBio(userProfileDTOReq.bio() != null ? userProfileDTOReq.bio() : user.getBio());
+        user.setAvatar_url(userProfileDTOReq.avatarUrl() != null ? userProfileDTOReq.avatarUrl() : user.getAvatar_url());
 
         userService.updateUser(user);
 
-        UserProfileDto userProfileDto = new UserProfileDto(
+        UserProfileDTO userProfileDto = new UserProfileDTO(
                 user.getId(),
                 user.getLogin(),
                 user.getName(),
@@ -75,10 +75,10 @@ public class UserProfileController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<UserProfileDto>> searchUserProfile(@RequestParam String login) {
+    public ResponseEntity<List<UserProfileDTO>> searchUserProfile(@RequestParam String login) {
         List<User> users = userService.findByNameStartingWith(login);
-        List<UserProfileDto> userProfiles = users.stream()
-                .map(user -> new UserProfileDto(
+        List<UserProfileDTO> userProfiles = users.stream()
+                .map(user -> new UserProfileDTO(
                         user.getId(),
                         user.getLogin(),
                         user.getName(),

@@ -1,12 +1,12 @@
 package com.api.TCCnnect.services.impl;
 
-import com.api.TCCnnect.dto.FollowRequest;
-import com.api.TCCnnect.dto.FollowResponse;
-import com.api.TCCnnect.dto.FollowingResponse;
+import com.api.TCCnnect.dto.FollowRequestDTO;
+import com.api.TCCnnect.dto.FollowResponseDTO;
+import com.api.TCCnnect.dto.FollowingResponseDTO;
 import com.api.TCCnnect.model.Follow;
 import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.repository.FollowRepository;
-import com.api.TCCnnect.repository.UsuarioRepository;
+import com.api.TCCnnect.repository.UserRepository;
 import com.api.TCCnnect.services.FollowService;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +18,11 @@ public class FollowServiceImpl implements FollowService {
 
 
     private final FollowRepository followRepository;
-    private final UsuarioRepository usuarioRepository;
+    private final UserRepository userRepository;
 
-    public FollowServiceImpl(FollowRepository followRepository, UsuarioRepository usuarioRepository) {
+    public FollowServiceImpl(FollowRepository followRepository, UserRepository userRepository) {
         this.followRepository = followRepository;
-        this.usuarioRepository = usuarioRepository;
+        this.userRepository = userRepository;
 
 
 
@@ -30,11 +30,11 @@ public class FollowServiceImpl implements FollowService {
 
 
     @Override
-    public FollowResponse followUser(FollowRequest followRequest) {
-        User follower = usuarioRepository.findById(followRequest.followerId())
+    public FollowResponseDTO followUser(FollowRequestDTO followRequestDTO) {
+        User follower = userRepository.findById(followRequestDTO.followerId())
                 .orElseThrow(() -> new RuntimeException("Follower not found"));
 
-        User followed = usuarioRepository.findById(followRequest.followedId())
+        User followed = userRepository.findById(followRequestDTO.followedId())
                 .orElseThrow(() -> new RuntimeException("Followed user not found"));
 
         Follow follow = new Follow();
@@ -43,18 +43,18 @@ public class FollowServiceImpl implements FollowService {
 
         followRepository.save(follow);
 
-        return new FollowResponse(follower.getLogin(), followed.getLogin());
+        return new FollowResponseDTO(follower.getLogin(), followed.getLogin());
     };
 
     @Override
-    public List<FollowingResponse> getFollowing(String userId) {
-        User user = usuarioRepository.findById(UUID.fromString(userId))
+    public List<FollowingResponseDTO> getFollowing(String userId) {
+        User user = userRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<Follow> follows = followRepository.findByFollower(user);
 
         return follows.stream()
-                .map(follow -> new FollowingResponse(
+                .map(follow -> new FollowingResponseDTO(
                         follow.getFollowed().getId(),
                         follow.getFollowed().getName(),
                         follow.getFollowed().getLogin(),

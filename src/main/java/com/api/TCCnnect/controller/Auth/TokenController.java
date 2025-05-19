@@ -1,7 +1,7 @@
-package com.api.TCCnnect.controller.AuthService;
+package com.api.TCCnnect.controller.Auth;
 
-import com.api.TCCnnect.dto.DadosAutenticacao;
-import com.api.TCCnnect.dto.DadosTokeJWT;
+import com.api.TCCnnect.dto.DadosAutenticacaoDTO;
+import com.api.TCCnnect.dto.DadosTokenJwtDTO;
 import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.services.TokenService;
 import jakarta.validation.Valid;
@@ -24,11 +24,11 @@ public class TokenController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> efetuarLogin(@RequestBody @Valid DadosAutenticacao dados) {
+    public ResponseEntity<?> efetuarLogin(@RequestBody @Valid DadosAutenticacaoDTO dados) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(dados.login(), dados.password());
         Authentication authentication = manager.authenticate(authenticationToken);
         String tokenJWT = tokenService.gerarToken((User) authentication.getPrincipal());
-        return ResponseEntity.ok(new DadosTokeJWT(tokenJWT));
+        return ResponseEntity.ok(new DadosTokenJwtDTO(tokenJWT));
 
     }
 }

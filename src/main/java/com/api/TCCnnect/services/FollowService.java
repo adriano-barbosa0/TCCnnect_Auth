@@ -1,15 +1,15 @@
 package com.api.TCCnnect.services;
 
-import com.api.TCCnnect.dto.FollowRequest;
-import com.api.TCCnnect.dto.FollowResponse;
-import com.api.TCCnnect.dto.FollowingResponse;
+import com.api.TCCnnect.dto.FollowRequestDTO;
+import com.api.TCCnnect.dto.FollowResponseDTO;
+import com.api.TCCnnect.dto.FollowingResponseDTO;
 
 import java.util.List;
 
 
 public interface FollowService {
 
-    FollowResponse followUser(FollowRequest followRequest);
+    FollowResponseDTO followUser(FollowRequestDTO followRequestDTO);
 
-    List<FollowingResponse> getFollowing(String userId);
+    List<FollowingResponseDTO> getFollowing(String userId);
 }

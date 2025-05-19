@@ -1,6 +1,6 @@
 package com.api.TCCnnect.infra.security;
 
-import com.api.TCCnnect.repository.UsuarioRepository;
+import com.api.TCCnnect.repository.UserRepository;
 import com.api.TCCnnect.services.TokenService;
 import com.api.TCCnnect.services.impl.TokenServiceImpl;
 import jakarta.servlet.FilterChain;
@@ -18,11 +18,11 @@ import java.util.Optional;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
-    private final UsuarioRepository usuarioRepository;
+    private final UserRepository userRepository;
 
-    public SecurityFilter(TokenServiceImpl tokenService, UsuarioRepository usuarioRepository) {
+    public SecurityFilter(TokenServiceImpl tokenService, UserRepository userRepository) {
         this.tokenService = tokenService;
-        this.usuarioRepository = usuarioRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         String tokenJWT = getToken(request);
         if(tokenJWT != null) {
             String subject = tokenService.getSubject(tokenJWT);
-            Optional<UserDetails> usuario = usuarioRepository.findByLogin(subject);
+            Optional<UserDetails> usuario = userRepository.findByLogin(subject);
             UsernamePasswordAuthenticationToken authentication = usuario.map(user -> new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())).orElse(null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

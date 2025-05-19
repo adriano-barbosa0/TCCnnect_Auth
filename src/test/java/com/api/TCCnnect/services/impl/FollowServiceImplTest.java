@@ -1,12 +1,12 @@
 package com.api.TCCnnect.services.impl;
 
-import com.api.TCCnnect.dto.FollowRequest;
-import com.api.TCCnnect.dto.FollowResponse;
-import com.api.TCCnnect.dto.FollowingResponse;
+import com.api.TCCnnect.dto.FollowRequestDTO;
+import com.api.TCCnnect.dto.FollowResponseDTO;
+import com.api.TCCnnect.dto.FollowingResponseDTO;
 import com.api.TCCnnect.model.Follow;
 import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.repository.FollowRepository;
-import com.api.TCCnnect.repository.UsuarioRepository;
+import com.api.TCCnnect.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,14 +19,14 @@ import static org.mockito.Mockito.*;
 
 class FollowServiceImplTest {
     private FollowRepository followRepository;
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
     private FollowServiceImpl followService;
 
     @BeforeEach
     void setUp() {
         followRepository = mock(FollowRepository.class);
-        usuarioRepository = mock(UsuarioRepository.class);
-        followService = new FollowServiceImpl(followRepository, usuarioRepository);
+        userRepository = mock(UserRepository.class);
+        followService = new FollowServiceImpl(followRepository, userRepository);
     }
 
     @Test
@@ -37,11 +37,11 @@ class FollowServiceImplTest {
         User follower = new User(followerId, "followerLogin", "password", "Follower Name", "bio", "avatar_url", null, null, null);
         User followed = new User(followedId, "followedLogin", "password", "Followed Name", "bio", "avatar_url", null, null, null);
 
-        when(usuarioRepository.findById(followerId)).thenReturn(Optional.of(follower));
-        when(usuarioRepository.findById(followedId)).thenReturn(Optional.of(followed));
+        when(userRepository.findById(followerId)).thenReturn(Optional.of(follower));
+        when(userRepository.findById(followedId)).thenReturn(Optional.of(followed));
 
-        FollowRequest followRequest = new FollowRequest(followerId, followedId);
-        FollowResponse response = followService.followUser(followRequest);
+        FollowRequestDTO followRequestDTO = new FollowRequestDTO(followerId, followedId);
+        FollowResponseDTO response = followService.followUser(followRequestDTO);
 
         assertNotNull(response);
         assertEquals("followerLogin", response.followerName());
@@ -54,11 +54,11 @@ class FollowServiceImplTest {
         UUID followerId = UUID.randomUUID();
         UUID followedId = UUID.randomUUID();
 
-        when(usuarioRepository.findById(followerId)).thenReturn(Optional.empty());
+        when(userRepository.findById(followerId)).thenReturn(Optional.empty());
 
-        FollowRequest followRequest = new FollowRequest(followerId, followedId);
+        FollowRequestDTO followRequestDTO = new FollowRequestDTO(followerId, followedId);
 
-        assertThrows(RuntimeException.class, () -> followService.followUser(followRequest));
+        assertThrows(RuntimeException.class, () -> followService.followUser(followRequestDTO));
         verify(followRepository, never()).save(any(Follow.class));
     }
 
@@ -69,12 +69,12 @@ class FollowServiceImplTest {
 
         User follower = new User(followerId, "followerLogin", "password", "Follower Name", "bio", "avatar_url", null, null, null);
 
-        when(usuarioRepository.findById(followerId)).thenReturn(Optional.of(follower));
-        when(usuarioRepository.findById(followedId)).thenReturn(Optional.empty());
+        when(userRepository.findById(followerId)).thenReturn(Optional.of(follower));
+        when(userRepository.findById(followedId)).thenReturn(Optional.empty());
 
-        FollowRequest followRequest = new FollowRequest(followerId, followedId);
+        FollowRequestDTO followRequestDTO = new FollowRequestDTO(followerId, followedId);
 
-        assertThrows(RuntimeException.class, () -> followService.followUser(followRequest));
+        assertThrows(RuntimeException.class, () -> followService.followUser(followRequestDTO));
         verify(followRepository, never()).save(any(Follow.class));
     }
 
@@ -85,10 +85,10 @@ class FollowServiceImplTest {
 
         Follow follow = new Follow(UUID.randomUUID(), user, new User(UUID.randomUUID(), "followedLogin", "password", "Followed Name", "bio", "avatar_url", null, null, null));
 
-        when(usuarioRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(followRepository.findByFollower(user)).thenReturn(List.of(follow));
 
-        List<FollowingResponse> following = followService.getFollowing(userId.toString());
+        List<FollowingResponseDTO> following = followService.getFollowing(userId.toString());
         System.out.println(following);
         assertNotNull(following);
         assertEquals(1, following.size());
@@ -99,7 +99,7 @@ class FollowServiceImplTest {
     void deveLancarExcecaoQuandoUsuarioNaoEncontradoAoBuscarSeguidores() {
         UUID userId = UUID.randomUUID();
 
-        when(usuarioRepository.findById(userId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> followService.getFollowing(userId.toString()));
         assertEquals("User not found", exception.getMessage());

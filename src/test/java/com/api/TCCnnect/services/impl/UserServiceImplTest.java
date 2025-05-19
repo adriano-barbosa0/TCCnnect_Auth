@@ -1,9 +1,9 @@
 package com.api.TCCnnect.services.impl;
 
-import com.api.TCCnnect.dto.UserSignUpDto;
+import com.api.TCCnnect.dto.UserSignUpDTO;
 import com.api.TCCnnect.dto.enums.UserRole;
 import com.api.TCCnnect.model.User;
-import com.api.TCCnnect.repository.UsuarioRepository;
+import com.api.TCCnnect.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 class UserServiceImplTest {
     @Mock
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -37,15 +37,15 @@ class UserServiceImplTest {
 
     @Test
     void saveUserSuccessfullySavesNewUser() {
-        UserSignUpDto newUserDto = new UserSignUpDto("newUser", "password");
+        UserSignUpDTO newUserDto = new UserSignUpDTO("newUser", "password");
         User newUser = new User();
         newUser.setLogin("newUser");
         newUser.setPassword("encodedPassword");
         newUser.setRole(UserRole.User);
 
-        when(usuarioRepository.findByLogin("newUser")).thenReturn(Optional.empty());
+        when(userRepository.findByLogin("newUser")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
-        when(usuarioRepository.save(any(User.class))).thenReturn(newUser);
+        when(userRepository.save(any(User.class))).thenReturn(newUser);
 
         User savedUser = userService.saveUser(newUserDto);
 
@@ -59,9 +59,9 @@ class UserServiceImplTest {
         User existingUser = new User();
         existingUser.setLogin("existingUser");
 
-        when(usuarioRepository.findByLogin("existingUser")).thenReturn(Optional.of(existingUser));
+        when(userRepository.findByLogin("existingUser")).thenReturn(Optional.of(existingUser));
 
-        UserSignUpDto newUserDto = new UserSignUpDto("existingUser", "password");
+        UserSignUpDTO newUserDto = new UserSignUpDTO("existingUser", "password");
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.saveUser(newUserDto));
         assertEquals("User already exists", exception.getMessage());
@@ -73,7 +73,7 @@ class UserServiceImplTest {
         User existingUser = new User();
         existingUser.setId(userId);
 
-        when(usuarioRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
         User foundUser = userService.findById(userId);
 
@@ -86,7 +86,7 @@ class UserServiceImplTest {
     void findByIdThrowsExceptionWhenUserNotFound() {
         UUID userId = UUID.randomUUID();
 
-        when(usuarioRepository.findById(userId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.findById(userId));
         assertEquals("User not found", exception.getMessage());
@@ -103,8 +103,8 @@ class UserServiceImplTest {
         updatedUser.setId(userId);
         updatedUser.setName("New Name");
 
-        when(usuarioRepository.findById(userId)).thenReturn(Optional.of(existingUser));
-        when(usuarioRepository.save(existingUser)).thenReturn(existingUser);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(existingUser)).thenReturn(existingUser);
         userService.updateUser(updatedUser);
 
         assertEquals("New Name", existingUser.getName());
@@ -115,7 +115,7 @@ class UserServiceImplTest {
         User userToUpdate = new User();
         userToUpdate.setId(UUID.randomUUID());
 
-        when(usuarioRepository.findById(userToUpdate.getId())).thenReturn(Optional.empty());
+        when(userRepository.findById(userToUpdate.getId())).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.updateUser(userToUpdate));
         assertEquals("User not found", exception.getMessage());
@@ -127,11 +127,11 @@ class UserServiceImplTest {
         User existingUser = new User();
         existingUser.setId(userId);
 
-        when(usuarioRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
         userService.deleteUser(existingUser);
 
-        verify(usuarioRepository).delete(existingUser);
+        verify(userRepository).delete(existingUser);
     }
 
     @Test
@@ -139,7 +139,7 @@ class UserServiceImplTest {
         User userToDelete = new User();
         userToDelete.setId(UUID.randomUUID());
 
-        when(usuarioRepository.findById(userToDelete.getId())).thenReturn(Optional.empty());
+        when(userRepository.findById(userToDelete.getId())).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.deleteUser(userToDelete));
         assertEquals("User not found", exception.getMessage());
@@ -153,7 +153,7 @@ class UserServiceImplTest {
         User user2 = new User();
         user2.setLogin("user2");
 
-        when(usuarioRepository.findByLoginStartingWithIgnoreCase(namePrefix)).thenReturn(List.of(user1, user2));
+        when(userRepository.findByLoginStartingWithIgnoreCase(namePrefix)).thenReturn(List.of(user1, user2));
 
         List<User> result = userService.findByNameStartingWith(namePrefix);
 
@@ -167,7 +167,7 @@ class UserServiceImplTest {
     void findByNameStartingWithReturnsEmptyListWhenNoUsersFound() {
         String namePrefix = "nonexistent";
 
-        when(usuarioRepository.findByLoginStartingWithIgnoreCase(namePrefix)).thenReturn(List.of());
+        when(userRepository.findByLoginStartingWithIgnoreCase(namePrefix)).thenReturn(List.of());
 
         List<User> result = userService.findByNameStartingWith(namePrefix);
 

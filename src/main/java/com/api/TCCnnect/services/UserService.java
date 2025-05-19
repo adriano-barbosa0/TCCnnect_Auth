@@ -1,6 +1,6 @@
 package com.api.TCCnnect.services;
 
-import com.api.TCCnnect.dto.UserSignUpDto;
+import com.api.TCCnnect.dto.UserSignUpDTO;
 import com.api.TCCnnect.model.User;
 
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface UserService {
 
-    User saveUser(UserSignUpDto user);
+    User saveUser(UserSignUpDTO user);
 
     User findById(UUID id);
 

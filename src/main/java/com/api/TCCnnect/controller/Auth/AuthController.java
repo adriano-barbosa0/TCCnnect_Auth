@@ -1,7 +1,7 @@
-package com.api.TCCnnect.controller.AuthService;
+package com.api.TCCnnect.controller.Auth;
 
-import com.api.TCCnnect.dto.UserProfileDto;
-import com.api.TCCnnect.dto.UserSignUpDto;
+import com.api.TCCnnect.dto.UserProfileDTO;
+import com.api.TCCnnect.dto.UserSignUpDTO;
 import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.services.TokenService;
 import com.api.TCCnnect.services.UserService;
@@ -25,17 +25,17 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> createUser(@RequestBody @Valid UserSignUpDto user) {
+    public ResponseEntity<String> createUser(@RequestBody @Valid UserSignUpDTO user) {
         userService.saveUser(user);
         return ResponseEntity.ok("usuario criado com sucesso");
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserProfileDto> getMyProfile(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<UserProfileDTO> getMyProfile(@RequestHeader("Authorization") String token) {
         String jwt = token.replace("Bearer ", "");
         UUID userId = tokenService.extractUserId(jwt);
         User user = userService.findById(userId);
-        UserProfileDto userProfile = new UserProfileDto(
+        UserProfileDTO userProfile = new UserProfileDTO(
                 user.getId(),
                 user.getUsername(),
                 user.getName(),
