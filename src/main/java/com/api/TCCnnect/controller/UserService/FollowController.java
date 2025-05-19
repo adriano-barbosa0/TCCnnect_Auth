@@ -1,9 +1,13 @@
 package com.api.TCCnnect.controller.UserService;
 
 import com.api.TCCnnect.dto.FollowRequest;
+import com.api.TCCnnect.dto.FollowResponse;
+import com.api.TCCnnect.dto.FollowingResponse;
 import com.api.TCCnnect.services.FollowService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/follow")
@@ -16,15 +20,14 @@ public class FollowController {
     }
 
     @GetMapping("/following")
-    public ResponseEntity<?> WhoIamFollowing(@RequestParam String userId) {
-
-        var flw = followService.getFollowing(userId);
-        return ResponseEntity.ok(flw);
+    public ResponseEntity<List<FollowingResponse>> getFollowing(@RequestParam String userId) {
+        List<FollowingResponse> following = followService.getFollowing(userId);
+        return ResponseEntity.ok(following);
     }
 
     @PostMapping
-    public ResponseEntity<?> followUser(@RequestBody FollowRequest followRequest) {
-        followService.followUser(followRequest);
-        return ResponseEntity.ok("User followed successfully");
+    public ResponseEntity<FollowResponse> followUser(@RequestBody FollowRequest followRequest) {
+        FollowResponse response = followService.followUser(followRequest);
+        return ResponseEntity.ok(response);
     }
 }

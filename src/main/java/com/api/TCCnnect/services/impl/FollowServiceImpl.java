@@ -1,6 +1,8 @@
 package com.api.TCCnnect.services.impl;
 
 import com.api.TCCnnect.dto.FollowRequest;
+import com.api.TCCnnect.dto.FollowResponse;
+import com.api.TCCnnect.dto.FollowingResponse;
 import com.api.TCCnnect.model.Follow;
 import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.repository.FollowRepository;
@@ -26,8 +28,9 @@ public class FollowServiceImpl implements FollowService {
 
 }
 
+
     @Override
-    public void followUser(FollowRequest followRequest) {
+    public FollowResponse followUser(FollowRequest followRequest) {
         User follower = usuarioRepository.findById(followRequest.followerId())
                 .orElseThrow(() -> new RuntimeException("Follower not found"));
 
@@ -39,15 +42,24 @@ public class FollowServiceImpl implements FollowService {
         follow.setFollowed(followed);
 
         followRepository.save(follow);
-    }
+
+        return new FollowResponse(follower.getLogin(), followed.getLogin());
+    };
 
     @Override
-    public List<User>  getFollowing(String userId) {
+    public List<FollowingResponse> getFollowing(String userId) {
         User user = usuarioRepository.findById(UUID.fromString(userId))
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         List<Follow> follows = followRepository.findByFollower(user);
+
         return follows.stream()
-                .map(Follow::getFollowed)
+                .map(follow -> new FollowingResponse(
+                        follow.getFollowed().getId(),
+                        follow.getFollowed().getName(),
+                        follow.getFollowed().getLogin(),
+                        follow.getFollowed().getAvatar_url()
+                ))
                 .toList();
     }
 }
