@@ -1,7 +1,7 @@
 package com.api.TCCnnect.controller.UserService;
 
 import com.api.TCCnnect.dto.UserProfileDto;
-import com.api.TCCnnect.model.Usuario;
+import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.services.TokenService;
 import com.api.TCCnnect.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class UserProfileController {
     @GetMapping("{id}")
     public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable UUID id) {
 
-        Usuario userProfile = userService.findById(id);
+        User userProfile = userService.findById(id);
 
         UserProfileDto userProfileDto = new UserProfileDto(
                 userProfile.getId(),
@@ -44,20 +44,20 @@ public class UserProfileController {
                                                               @RequestBody UserProfileDto userProfileDtoReq) {
         String jwt = token.replace("Bearer ", "");
         UUID userId = tokenService.extractUserId(jwt);
-        Usuario usuario = userService.findById(userId);
+        User user = userService.findById(userId);
 
-        usuario.setName(userProfileDtoReq.name() != null ? userProfileDtoReq.name() : usuario.getName());
-        usuario.setBio(userProfileDtoReq.bio() != null ? userProfileDtoReq.bio() : usuario.getBio());
-        usuario.setAvatar_url(userProfileDtoReq.avatarUrl() != null ? userProfileDtoReq.avatarUrl() : usuario.getAvatar_url());
+        user.setName(userProfileDtoReq.name() != null ? userProfileDtoReq.name() : user.getName());
+        user.setBio(userProfileDtoReq.bio() != null ? userProfileDtoReq.bio() : user.getBio());
+        user.setAvatar_url(userProfileDtoReq.avatarUrl() != null ? userProfileDtoReq.avatarUrl() : user.getAvatar_url());
 
-        userService.updateUser(usuario);
+        userService.updateUser(user);
 
         UserProfileDto userProfileDto = new UserProfileDto(
-                usuario.getId(),
-                usuario.getLogin(),
-                usuario.getName(),
-                usuario.getBio(),
-                usuario.getAvatar_url()
+                user.getId(),
+                user.getLogin(),
+                user.getName(),
+                user.getBio(),
+                user.getAvatar_url()
         );
 
         return ResponseEntity.ok(userProfileDto);
@@ -67,16 +67,16 @@ public class UserProfileController {
     public ResponseEntity<Void> deleteUserProfile(@RequestHeader("Authorization") String token) {
         String jwt = token.replace("Bearer ", "");
         UUID userId = tokenService.extractUserId(jwt);
-        Usuario usuario = userService.findById(userId);
+        User user = userService.findById(userId);
 
-        userService.deleteUser(usuario);
+        userService.deleteUser(user);
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<UserProfileDto>> searchUserProfile(@RequestParam String login) {
-        List<Usuario> users = userService.findByNameStartingWith(login);
+        List<User> users = userService.findByNameStartingWith(login);
         List<UserProfileDto> userProfiles = users.stream()
                 .map(user -> new UserProfileDto(
                         user.getId(),

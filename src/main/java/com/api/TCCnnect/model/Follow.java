@@ -23,10 +23,10 @@ public class Follow {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")
-    private Usuario followed;  // quem está sendo seguido
+    private User followed;  // quem está sendo seguido
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario_seguido")
-    private Usuario follower;  // quem está seguindo
+    private User follower;  // quem está seguindo
 
 }

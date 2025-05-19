@@ -1,6 +1,6 @@
 package com.api.TCCnnect.services.impl;
 
-import com.api.TCCnnect.model.Usuario;
+import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.services.TokenService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -20,13 +20,13 @@ public class TokenServiceImpl implements TokenService {
     private String secret;
 
     @Override
-    public String gerarToken(Usuario usuario) {
+    public String gerarToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("Api AuthUser")
-                    .withSubject(usuario.getLogin())
-                    .withClaim("Id", usuario.getId().toString())
+                    .withSubject(user.getLogin())
+                    .withClaim("Id", user.getId().toString())
                     .withExpiresAt(expirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {

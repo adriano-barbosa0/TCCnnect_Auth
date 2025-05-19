@@ -2,7 +2,7 @@ package com.api.TCCnnect.controller.AuthService;
 
 import com.api.TCCnnect.dto.DadosAutenticacao;
 import com.api.TCCnnect.dto.DadosTokeJWT;
-import com.api.TCCnnect.model.Usuario;
+import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.services.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class TokenController {
     public ResponseEntity<?> efetuarLogin(@RequestBody @Valid DadosAutenticacao dados) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(dados.login(), dados.password());
         Authentication authentication = manager.authenticate(authenticationToken);
-        String tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
+        String tokenJWT = tokenService.gerarToken((User) authentication.getPrincipal());
         return ResponseEntity.ok(new DadosTokeJWT(tokenJWT));
 
     }

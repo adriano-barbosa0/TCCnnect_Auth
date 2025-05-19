@@ -1,7 +1,7 @@
 package com.api.TCCnnect.services.impl;
 
 import com.api.TCCnnect.dto.enums.UserRole;
-import com.api.TCCnnect.model.Usuario;
+import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.repository.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class UserServiceImplTest {
 
     @Test
     void saveUserSuccessfullySavesNewUser() {
-        Usuario newUser = new Usuario();
+        User newUser = new User();
         newUser.setLogin("newUser");
         newUser.setPassword("password");
 
@@ -43,7 +43,7 @@ class UserServiceImplTest {
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
         when(usuarioRepository.save(newUser)).thenReturn(newUser);
 
-        Usuario savedUser = userService.saveUser(newUser);
+        User savedUser = userService.saveUser(newUser);
 
         assertNotNull(savedUser);
         assertEquals("encodedPassword", savedUser.getPassword());
@@ -52,12 +52,12 @@ class UserServiceImplTest {
 
     @Test
     void saveUserThrowsExceptionWhenUserAlreadyExists() {
-        Usuario existingUser = new Usuario();
+        User existingUser = new User();
         existingUser.setLogin("existingUser");
 
         when(usuarioRepository.findByLogin("existingUser")).thenReturn(Optional.of(existingUser));
 
-        Usuario newUser = new Usuario();
+        User newUser = new User();
         newUser.setLogin("existingUser");
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.saveUser(newUser));
@@ -67,12 +67,12 @@ class UserServiceImplTest {
     @Test
     void findByIdReturnsUserWhenFound() {
         UUID userId = UUID.randomUUID();
-        Usuario existingUser = new Usuario();
+        User existingUser = new User();
         existingUser.setId(userId);
 
         when(usuarioRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
-        Usuario foundUser = userService.findById(userId);
+        User foundUser = userService.findById(userId);
 
         assertNotNull(foundUser);
         assertEquals(userId, foundUser.getId());
@@ -92,11 +92,11 @@ class UserServiceImplTest {
     @Test
     void updateUserSuccessfullyUpdatesExistingUser() {
         UUID userId = UUID.randomUUID();
-        Usuario existingUser = new Usuario();
+        User existingUser = new User();
         existingUser.setId(userId);
         existingUser.setName("Old Name");
 
-        Usuario updatedUser = new Usuario();
+        User updatedUser = new User();
         updatedUser.setId(userId);
         updatedUser.setName("New Name");
 
@@ -109,7 +109,7 @@ class UserServiceImplTest {
 
     @Test
     void updateUserThrowsExceptionWhenUserNotFound() {
-        Usuario userToUpdate = new Usuario();
+        User userToUpdate = new User();
         userToUpdate.setId(UUID.randomUUID());
 
         when(usuarioRepository.findById(userToUpdate.getId())).thenReturn(Optional.empty());
@@ -121,7 +121,7 @@ class UserServiceImplTest {
     @Test
     void deleteUserSuccessfullyDeletesExistingUser() {
         UUID userId = UUID.randomUUID();
-        Usuario existingUser = new Usuario();
+        User existingUser = new User();
         existingUser.setId(userId);
 
         when(usuarioRepository.findById(userId)).thenReturn(Optional.of(existingUser));
@@ -133,7 +133,7 @@ class UserServiceImplTest {
 
     @Test
     void deleteUserThrowsExceptionWhenUserNotFound() {
-        Usuario userToDelete = new Usuario();
+        User userToDelete = new User();
         userToDelete.setId(UUID.randomUUID());
 
         when(usuarioRepository.findById(userToDelete.getId())).thenReturn(Optional.empty());
@@ -145,14 +145,14 @@ class UserServiceImplTest {
     @Test
     void findByNameStartingWithReturnsUsersWhenFound() {
         String namePrefix = "user";
-        Usuario user1 = new Usuario();
+        User user1 = new User();
         user1.setLogin("user1");
-        Usuario user2 = new Usuario();
+        User user2 = new User();
         user2.setLogin("user2");
 
         when(usuarioRepository.findByLoginStartingWithIgnoreCase(namePrefix)).thenReturn(List.of(user1, user2));
 
-        List<Usuario> result = userService.findByNameStartingWith(namePrefix);
+        List<User> result = userService.findByNameStartingWith(namePrefix);
 
         assertFalse(result.isEmpty());
         assertEquals(2, result.size());
@@ -166,7 +166,7 @@ class UserServiceImplTest {
 
         when(usuarioRepository.findByLoginStartingWithIgnoreCase(namePrefix)).thenReturn(List.of());
 
-        List<Usuario> result = userService.findByNameStartingWith(namePrefix);
+        List<User> result = userService.findByNameStartingWith(namePrefix);
 
         assertTrue(result.isEmpty());
     }

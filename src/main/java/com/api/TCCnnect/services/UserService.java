@@ -1,20 +1,20 @@
 package com.api.TCCnnect.services;
 
-import com.api.TCCnnect.model.Usuario;
+import com.api.TCCnnect.model.User;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
 
-    Usuario saveUser(Usuario usuario);
+    User saveUser(User user);
 
-    Usuario findById(UUID id);
+    User findById(UUID id);
 
-    void updateUser(Usuario usuario);
+    void updateUser(User user);
 
-    void deleteUser(Usuario usuario);
+    void deleteUser(User user);
 
-    List<Usuario> findByNameStartingWith(String namePrefix);
+    List<User> findByNameStartingWith(String namePrefix);
 }
 

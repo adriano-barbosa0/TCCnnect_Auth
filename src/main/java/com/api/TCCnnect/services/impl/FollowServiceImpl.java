@@ -1,9 +1,8 @@
 package com.api.TCCnnect.services.impl;
 
 import com.api.TCCnnect.dto.FollowRequest;
-import com.api.TCCnnect.dto.UserProfileDto;
 import com.api.TCCnnect.model.Follow;
-import com.api.TCCnnect.model.Usuario;
+import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.repository.FollowRepository;
 import com.api.TCCnnect.repository.UsuarioRepository;
 import com.api.TCCnnect.services.FollowService;
@@ -29,10 +28,10 @@ public class FollowServiceImpl implements FollowService {
 
     @Override
     public void followUser(FollowRequest followRequest) {
-        Usuario follower = usuarioRepository.findById(followRequest.followerId())
+        User follower = usuarioRepository.findById(followRequest.followerId())
                 .orElseThrow(() -> new RuntimeException("Follower not found"));
 
-        Usuario followed = usuarioRepository.findById(followRequest.followedId())
+        User followed = usuarioRepository.findById(followRequest.followedId())
                 .orElseThrow(() -> new RuntimeException("Followed user not found"));
 
         Follow follow = new Follow();
@@ -43,10 +42,10 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    public List<Usuario>  getFollowing(String userId) {
-        Usuario usuario = usuarioRepository.findById(UUID.fromString(userId))
+    public List<User>  getFollowing(String userId) {
+        User user = usuarioRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        List<Follow> follows = followRepository.findByFollower(usuario);
+        List<Follow> follows = followRepository.findByFollower(user);
         return follows.stream()
                 .map(Follow::getFollowed)
                 .toList();

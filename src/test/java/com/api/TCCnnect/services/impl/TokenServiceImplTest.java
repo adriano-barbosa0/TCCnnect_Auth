@@ -1,6 +1,6 @@
 package com.api.TCCnnect.services.impl;
 
-import com.api.TCCnnect.model.Usuario;
+import com.api.TCCnnect.model.User;
 import com.auth0.jwt.JWT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,20 +13,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class TokenServiceImplTest {
 
     private TokenServiceImpl tokenService;
-    private Usuario usuario;
+    private User user;
 
     @BeforeEach
     void setUp() {
         tokenService = new TokenServiceImpl();
         ReflectionTestUtils.setField(tokenService, "secret", "12345678");
-        usuario = new Usuario((UUID.fromString("63e954c3-191c-4231-8382-bf5e900e3828")), "userLogin@email.com", "userPassword", null, null, null, null, null, null);
+        user = new User((UUID.fromString("63e954c3-191c-4231-8382-bf5e900e3828")), "userLogin@email.com", "userPassword", null, null, null, null, null, null);
     }
 
     @Test
     void deveGerarTokenValido() {
-        Usuario usuario = new Usuario(UUID.fromString("de588f6e-8999-4526-89f1-9b2d5453bbfe"), "userLogin@email.com", "userPassword", null, null, null, null, null, null);
-        String token = tokenService.gerarToken(usuario);
-        assertNotNull(token);
+        String token = tokenService.gerarToken(user);
+        String id = JWT.decode(token).getClaim("Id").asString();
+        assertEquals("63e954c3-191c-4231-8382-bf5e900e3828", id);
     }
 
     @Test
@@ -36,7 +36,7 @@ class TokenServiceImplTest {
 
     @Test
     void deveRetornarSubjectDoToken() {
-        String token = tokenService.gerarToken(usuario);
+        String token = tokenService.gerarToken(user);
         String subject = tokenService.getSubject(token);
         assertEquals("userLogin@email.com", subject);
     }
@@ -49,9 +49,9 @@ class TokenServiceImplTest {
 
     @Test
     void deveConterIdCorretoNoToken() {
-        String token = tokenService.gerarToken(usuario);
+        String token = tokenService.gerarToken(user);
         String id = JWT.decode(token).getClaim("Id").asString();
-        assertEquals("1", id);
+        assertEquals("63e954c3-191c-4231-8382-bf5e900e3828", id);
     }
 
     @Test

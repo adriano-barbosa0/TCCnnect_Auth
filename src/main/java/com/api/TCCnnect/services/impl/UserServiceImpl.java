@@ -1,7 +1,7 @@
 package com.api.TCCnnect.services.impl;
 
 import com.api.TCCnnect.dto.enums.UserRole;
-import com.api.TCCnnect.model.Usuario;
+import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.repository.UsuarioRepository;
 import com.api.TCCnnect.services.UserService;
 
@@ -23,48 +23,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Usuario saveUser(Usuario usuario) {
-        this.usuarioRepository.findByLogin(usuario.getLogin())
+    public User saveUser(User user) {
+        this.usuarioRepository.findByLogin(user.getLogin())
                 .ifPresent(u -> {
                     throw new RuntimeException("User already exists");
                 });
-        var encodedPassword = passwordEncoder.encode(usuario.getPassword());
+        var encodedPassword = passwordEncoder.encode(user.getPassword());
 
-        usuario.setPassword(encodedPassword);
-        usuario.setRole(UserRole.User);
+        user.setPassword(encodedPassword);
+        user.setRole(UserRole.User);
 
-        return usuarioRepository.save(usuario);
+        return usuarioRepository.save(user);
     }
 
     @Override
-    public Usuario findById(UUID id) {
+    public User findById(UUID id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @Override
-    public void updateUser(Usuario usuario) {
+    public void updateUser(User user) {
 
-        Usuario existingUser = usuarioRepository.findById(usuario.getId())
+        User existingUser = usuarioRepository.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        existingUser.setName(usuario.getName());
-        existingUser.setBio(usuario.getBio());
-        existingUser.setAvatar_url(usuario.getAvatar_url());
+        existingUser.setName(user.getName());
+        existingUser.setBio(user.getBio());
+        existingUser.setAvatar_url(user.getAvatar_url());
 
         usuarioRepository.save(existingUser);
     }
 
     @Override
-    public void deleteUser(Usuario usuario) {
-        Usuario existingUser = usuarioRepository.findById(usuario.getId())
+    public void deleteUser(User user) {
+        User existingUser = usuarioRepository.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         usuarioRepository.delete(existingUser);
     }
 
     @Override
-    public List<Usuario> findByNameStartingWith(String namePrefix) {
+    public List<User> findByNameStartingWith(String namePrefix) {
         return usuarioRepository.findByLoginStartingWithIgnoreCase(namePrefix);
 
     }
