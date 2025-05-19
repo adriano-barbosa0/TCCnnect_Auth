@@ -1,5 +1,6 @@
 package com.api.TCCnnect.services.impl;
 
+import com.api.TCCnnect.dto.UserSignUpDto;
 import com.api.TCCnnect.dto.enums.UserRole;
 import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.repository.UsuarioRepository;
@@ -23,17 +24,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(User user) {
-        this.usuarioRepository.findByLogin(user.getLogin())
+    public User saveUser(UserSignUpDto user) {
+        this.usuarioRepository.findByLogin(user.login())
                 .ifPresent(u -> {
                     throw new RuntimeException("User already exists");
                 });
-        var encodedPassword = passwordEncoder.encode(user.getPassword());
+        var encodedPassword = passwordEncoder.encode(user.password());
 
-        user.setPassword(encodedPassword);
-        user.setRole(UserRole.User);
+        User newUser = new User();
+        newUser.setLogin(user.login());
+        newUser.setPassword(encodedPassword);
+        newUser.setRole(UserRole.User);
 
-        return usuarioRepository.save(user);
+        return usuarioRepository.save(newUser);
     }
 
     @Override

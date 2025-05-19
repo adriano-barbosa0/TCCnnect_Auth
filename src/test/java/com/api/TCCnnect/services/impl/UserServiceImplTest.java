@@ -1,5 +1,6 @@
 package com.api.TCCnnect.services.impl;
 
+import com.api.TCCnnect.dto.UserSignUpDto;
 import com.api.TCCnnect.dto.enums.UserRole;
 import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.repository.UsuarioRepository;
@@ -17,6 +18,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 class UserServiceImplTest {
     @Mock
@@ -35,15 +37,17 @@ class UserServiceImplTest {
 
     @Test
     void saveUserSuccessfullySavesNewUser() {
+        UserSignUpDto newUserDto = new UserSignUpDto("newUser", "password");
         User newUser = new User();
         newUser.setLogin("newUser");
-        newUser.setPassword("password");
+        newUser.setPassword("encodedPassword");
+        newUser.setRole(UserRole.User);
 
         when(usuarioRepository.findByLogin("newUser")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
-        when(usuarioRepository.save(newUser)).thenReturn(newUser);
+        when(usuarioRepository.save(any(User.class))).thenReturn(newUser);
 
-        User savedUser = userService.saveUser(newUser);
+        User savedUser = userService.saveUser(newUserDto);
 
         assertNotNull(savedUser);
         assertEquals("encodedPassword", savedUser.getPassword());
@@ -57,10 +61,9 @@ class UserServiceImplTest {
 
         when(usuarioRepository.findByLogin("existingUser")).thenReturn(Optional.of(existingUser));
 
-        User newUser = new User();
-        newUser.setLogin("existingUser");
+        UserSignUpDto newUserDto = new UserSignUpDto("existingUser", "password");
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.saveUser(newUser));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.saveUser(newUserDto));
         assertEquals("User already exists", exception.getMessage());
     }
 

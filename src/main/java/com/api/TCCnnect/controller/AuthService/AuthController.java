@@ -1,10 +1,12 @@
 package com.api.TCCnnect.controller.AuthService;
 
 import com.api.TCCnnect.dto.UserProfileDto;
+import com.api.TCCnnect.dto.UserSignUpDto;
 import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.services.TokenService;
 import com.api.TCCnnect.services.UserService;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +25,8 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
-        User savedUser = userService.saveUser(user);
+    public ResponseEntity<String> createUser(@RequestBody @Valid UserSignUpDto user) {
+        userService.saveUser(user);
         return ResponseEntity.ok("usuario criado com sucesso");
     }
 
