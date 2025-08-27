@@ -1,6 +1,6 @@
 package com.api.TCCnnect.services.impl;
 
-import com.api.TCCnnect.model.Usuario;
+import com.api.TCCnnect.model.User;
 import com.api.TCCnnect.services.TokenService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -19,13 +20,13 @@ public class TokenServiceImpl implements TokenService {
     private String secret;
 
     @Override
-    public String gerarToken(Usuario usuario) {
+    public String gerarToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("Api AuthUser")
-                    .withSubject(usuario.getLogin())
-                    .withClaim("Id", usuario.getId())
+                    .withSubject(user.getLogin())
+                    .withClaim("Id", user.getId().toString())
                     .withExpiresAt(expirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
@@ -52,5 +53,20 @@ public class TokenServiceImpl implements TokenService {
         return LocalDateTime.now()
                 .plusHours(3)
                 .toInstant(ZoneOffset.of("-03:00"));
+    }
+
+    public UUID extractUserId(String tokenJWT) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            String userId = JWT.require(algorithm)
+                    .withIssuer("Api AuthUser")
+                    .build()
+                    .verify(tokenJWT)
+                    .getClaim("Id")
+                    .asString();
+            return UUID.fromString(userId);
+        } catch (JWTVerificationException exception) {
+            throw new RuntimeException("Token inválido ou expirado!", exception);
+        }
     }
 }
