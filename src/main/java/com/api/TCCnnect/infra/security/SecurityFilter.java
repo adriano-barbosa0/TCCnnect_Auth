@@ -1,6 +1,6 @@
 package com.api.TCCnnect.infra.security;
 
-import com.api.TCCnnect.repository.UsuarioRepository;
+import com.api.TCCnnect.repository.UserRepository;
 import com.api.TCCnnect.services.TokenService;
 import com.api.TCCnnect.services.impl.TokenServiceImpl;
 import jakarta.servlet.FilterChain;
@@ -13,15 +13,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
-    private final TokenServiceImpl tokenService;
-    private final UsuarioRepository usuarioRepository;
+    private final TokenService tokenService;
+    private final UserRepository userRepository;
 
-    public SecurityFilter(TokenServiceImpl tokenService, UsuarioRepository usuarioRepository) {
+    public SecurityFilter(TokenServiceImpl tokenService, UserRepository userRepository) {
         this.tokenService = tokenService;
-        this.usuarioRepository = usuarioRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -30,8 +31,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         String tokenJWT = getToken(request);
         if(tokenJWT != null) {
             String subject = tokenService.getSubject(tokenJWT);
-            UserDetails usuario = usuarioRepository.findByLogin(subject);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+            Optional<UserDetails> usuario = userRepository.findByLogin(subject);
+            UsernamePasswordAuthenticationToken authentication = usuario.map(user -> new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())).orElse(null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);

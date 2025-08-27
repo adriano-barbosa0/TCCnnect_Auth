@@ -1,31 +1,25 @@
 package com.api.TCCnnect.services.impl;
 
-import com.api.TCCnnect.repository.UsuarioRepository;
+import com.api.TCCnnect.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class AuthenticacaoService implements UserDetailsService {
 
 
-    private final UsuarioRepository usuarioRepository;
+    private final UserRepository userRepository;
 
-    public AuthenticacaoService(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public AuthenticacaoService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        UserDetails usuario = usuarioRepository.findByLogin(username);
-
-        if (usuario == null ){
-            throw new UsernameNotFoundException("Dados inválidos");
-        }
-
-        return usuario;
+        return userRepository.findByLogin(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Dados inválidos"));
     }
-
 }
